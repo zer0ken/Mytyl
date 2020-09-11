@@ -43,7 +43,7 @@ class TwitterCog(CustomCog, name=get_cog('TwitterCog')['name']):
         auth = tweepy.OAuthHandler(config('TWITTER_API_KEY'), config('TWITTER_API_KEY_SECRET'))
         auth.set_access_token(config('TWITTER_ACCESS_TOKEN'), config('TWITTER_ACCESS_TOKEN_SECRET'))
         self.twitter = tweepy.API(auth)
-        self.cached_message = []
+        self.cached_message = list()
 
     def cache(self, message_id: int):
         self.cached_message.append(message_id)
@@ -57,23 +57,23 @@ class TwitterCog(CustomCog, name=get_cog('TwitterCog')['name']):
         if reaction.message.id in self.cached_message:
             return
 
-        message: Message = await reaction.message.channel.send('이 메시지를 트위터에 올릴까요?')
-        await message.add_reaction(CONFIRM_EMOJI)
-        await message.add_reaction(CANCEL_EMOJI)
+        confirm_message: Message = await reaction.message.channel.send('이 메시지를 트위터에 올릴까요?')
+        await confirm_message.add_reaction(CONFIRM_EMOJI)
+        await confirm_message.add_reaction(CANCEL_EMOJI)
 
         def is_reaction(reaction_: Reaction, user_: User):
             return uploader == user_ and reaction_.emoji in (CONFIRM_EMOJI, CANCEL_EMOJI)
 
         try:
-            reaction, _ = await self.bot.wait_for('reaction_add', check=is_reaction, timeout=TWEET_TIMEOUT)
+            confirm_reaction, _ = await self.bot.wait_for('reaction_add', check=is_reaction, timeout=TWEET_TIMEOUT)
         except asyncio.TimeoutError:
             return
         else:
-            if reaction.emoji == CANCEL_EMOJI:
+            if confirm_reaction.emoji == CANCEL_EMOJI:
                 self.cache(reaction.message.id)
                 return
         finally:
-            await message.delete()
+            await confirm_message.delete()
         media_ids = list()
         if reaction.message.attachments:
             async def save(attachment: Attachment):
@@ -84,6 +84,8 @@ class TwitterCog(CustomCog, name=get_cog('TwitterCog')['name']):
                 file_.close()
 
             await asyncio.wait([save(attachment) for attachment in reaction.message.attachments])
+        print(reaction)
+        print(reaction.message)
         author_name = await get_twitter_mention(reaction.message.author)
         if author_name is None:
             author_name = reaction.message.author.name
