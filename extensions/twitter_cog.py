@@ -56,9 +56,12 @@ class TwitterCog(CustomCog, name=get_cog('TwitterCog')['name']):
             return uploader == user_ and reaction_.emoji in (CONFIRM_EMOJI, CANCEL_EMOJI)
 
         try:
-            await self.bot.wait_for('reaction_add', check=is_reaction, timeout=TWEET_TIMEOUT)
+            reaction, _ = await self.bot.wait_for('reaction_add', check=is_reaction, timeout=TWEET_TIMEOUT)
         except asyncio.TimeoutError:
             return
+        else:
+            if reaction.emoji == CANCEL_EMOJI:
+                return
         finally:
             await message.delete()
         media_ids = list()
