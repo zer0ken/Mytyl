@@ -9,10 +9,11 @@ from discord.ext.commands import Bot
 from custom.cog import CustomCog
 from utils import get_cog, get_emoji
 
+CACHE_SIZE = 100
 TWEET_MAX_LENGTH = 140
-
 TWEET_TIMEOUT = 60
 
+UPLOAD_EMOJI = get_emoji(':blue_heart:')
 CONFIRM_EMOJI = get_emoji(':o:')
 CANCEL_EMOJI = get_emoji(':x:')
 
@@ -42,10 +43,13 @@ class TwitterCog(CustomCog, name=get_cog('TwitterCog')['name']):
         auth = tweepy.OAuthHandler(config('TWITTER_API_KEY'), config('TWITTER_API_KEY_SECRET'))
         auth.set_access_token(config('TWITTER_ACCESS_TOKEN'), config('TWITTER_ACCESS_TOKEN_SECRET'))
         self.twitter = tweepy.API(auth)
+        self.cached_message = []
 
     @CustomCog.listener(name='on_reaction_add')
     async def tweet_from_message(self, reaction: Reaction, uploader: User):
-        if reaction.emoji != get_emoji(':blue_heart:'):
+        if reaction.emoji != UPLOAD_EMOJI:
+            return
+        if reaction.message.id in self.cached_message:
             return
 
         message: Message = await reaction.message.channel.send('이 메시지를 트위터에 올릴까요?')
@@ -95,6 +99,9 @@ class TwitterCog(CustomCog, name=get_cog('TwitterCog')['name']):
             mentions = uploader_mention + ' ' + mentions
         self.twitter.update_status(status=mentions, in_reply_to_status_id=prev_status)
         await reaction.message.channel.send(get_status_url(first_status.id_str))
+        self.cached_message.append(reaction.message.id)
+        if len(self.cached_message) > CACHE_SIZE:
+            self.cached_message = self.cached_message[1:]
 
 
 def setup(bot: Bot):
