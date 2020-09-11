@@ -1,0 +1,5 @@
+discord.py==1.4.1
+python-decouple==3.3
+google-api-python-client==1.11.0
+scrapy==2.3.0
+tweepy==3.9.0

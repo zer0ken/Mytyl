@@ -1,0 +1,70 @@
+{
+  "_constant_": {
+    "default_prefix": "ㅁ",
+    "prefixes": [
+      "ㅁ",
+      "a"
+    ],
+    "extension_name": "Mytyl.extensions.%s"
+  },
+  "_path_": {
+    "extensions": "./Mytyl/extensions/"
+  },
+  "_cog_": {
+    "_default_": {
+      "name": "-",
+      "emoji": "-",
+      "priority": 0
+    },
+    "BaseCog": {
+      "name": "기본 기능",
+      "emoji": "\uD83D\uDFEA",
+      "priority": 0
+    },
+    "CustomHelpCog": {
+      "name": "도움",
+      "emoji": "❓",
+      "priority": 1
+    },
+    "TwitterCog": {
+      "name": "트위터",
+      "emoji": "\uD83D\uDC99",
+      "priority": 2
+    }
+  },
+  "_emoji_": {
+    "_default_": "⛔",
+    ":no_entry:": "⛔",
+    ":arrow_left:": "⬅️",
+    ":arrow_right:": "➡️",
+    ":white_check_mark:": "✅",
+    ":blue_heart:": "\uD83D\uDC99"
+  },
+  "_brief_": {
+    "핑": "봇이 반응하는지 확인합니다.",
+    "도움말": "명령어의 사용법을 확인합니다.",
+    "명령어": "사용할 수 있는 명령어의 목록을 확인합니다.",
+    "검색": "명령어를 검색합니다."
+  },
+  "_help_": {
+    "도움말": "명령어의 사용법이나 하위 명령어의 종류를 확인합니다. 명령어의 종류를 확인하려면 `<P>명령어`를 사용해보세요.",
+    "명령어": "사용할 수 있는 명령어의 목록을 확인합니다. 명령어를 사용하는 방법을 확인하려면 `<P>도움말`을 사용해보세요.",
+    "검색": "키워드를 바탕으로 관련있는 명령어를 검색합니다."
+  },
+  "send_cog_list": {
+    "title": "\uD83D\uDCD6 명령어 목록",
+    "description": "봇에 포함된 기능의 분류와 명령어 목록입니다. 자세히 알아보려면 `<P>도움말`을 사용해보세요.",
+    "footer": "%s / %s 페이지"
+  },
+  "cog_brief": {
+    "no_description": "사용 가능한 기능이 없습니다."
+  },
+  "search": {
+    "title": "\uD83D\uDD0D 명령어 검색",
+    "found": "다음의 키워드를 기반으로 %s개의 명령어를 찾았습니다.\n```\n%s```",
+    "not_found": "다음의 키워드와 관련있는 명령어를 찾지 못했습니다.\n```\n%s```"
+  },
+  "ping": {
+    "pong": "퐁"
+  }
+}
