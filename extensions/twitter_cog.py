@@ -68,9 +68,8 @@ class TwitterCog(CustomCog, name=get_cog('TwitterCog')['name']):
             if media_ids:
                 media = media_ids[:4]
                 media_ids = media_ids[4:]
-            if media:
-                prev_status = self.twitter.update_status(status=status, media_ids=media,
-                                                         in_reply_to_status_id=prev_status)
+            prev_status = self.twitter.update_status(status=status, media_ids=media,
+                                                     in_reply_to_status_id=prev_status)
             if first_status is None:
                 first_status = prev_status
             prev_status = prev_status.id
