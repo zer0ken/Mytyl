@@ -55,9 +55,6 @@ class TwitterCog(CustomCog, name=get_cog('TwitterCog')['name']):
         author_name = await get_twitter_mention(reaction.message.author)
         if author_name is None:
             author_name = reaction.message.author.name
-        uploader_name = await get_twitter_mention(uploader)
-        if uploader_name is None:
-            uploader_name = uploader.name
         first_status = None
         prev_status = None
         for status in chunkstring(f'{author_name}: {reaction.message.content}', TWEET_MAX_LENGTH):
@@ -70,7 +67,11 @@ class TwitterCog(CustomCog, name=get_cog('TwitterCog')['name']):
             if first_status is None:
                 first_status = prev_status
             prev_status = prev_status.id
-        self.twitter.update_status(status=f'{uploader_name}님의 제보\n@//shtelo', in_reply_to_status_id=prev_status)
+        mentions = f'{uploader.name}님의 제보\n@shtelo'
+        uploader_mention = await get_twitter_mention(uploader)
+        if uploader_mention is not None:
+            mentions = uploader_mention + ' ' + mentions
+        self.twitter.update_status(status=mentions, in_reply_to_status_id=prev_status)
         await reaction.message.channel.send(get_status_url(first_status.id_str))
 
 
