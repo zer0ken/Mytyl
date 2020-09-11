@@ -3,13 +3,18 @@ from tempfile import NamedTemporaryFile
 
 import tweepy
 from decouple import config
-from discord import Profile, Reaction, User, Attachment
+from discord import Profile, Reaction, User, Attachment, Message
 from discord.ext.commands import Bot
 
 from custom.cog import CustomCog
 from utils import get_cog, get_emoji
 
 TWEET_MAX_LENGTH = 140
+
+TWEET_TIMEOUT = 60
+
+CONFIRM_EMOJI = get_emoji(':o:')
+CANCEL_EMOJI = get_emoji(':x:')
 
 
 def get_status_url(id_: str):
@@ -42,6 +47,20 @@ class TwitterCog(CustomCog, name=get_cog('TwitterCog')['name']):
     async def tweet_from_message(self, reaction: Reaction, uploader: User):
         if reaction.emoji != get_emoji(':blue_heart:'):
             return
+
+        message: Message = await reaction.message.channel.send('이 메시지를 트위터에 올릴까요?')
+        await message.add_reaction(CONFIRM_EMOJI)
+        await message.add_reaction(CANCEL_EMOJI)
+
+        def is_reaction(reaction_: Reaction, user_: User):
+            return uploader == user_ and reaction_.emoji in (CONFIRM_EMOJI, CANCEL_EMOJI)
+
+        try:
+            await self.bot.wait_for('reaction_add', check=is_reaction, timeout=TWEET_TIMEOUT)
+        except asyncio.TimeoutError:
+            return
+        finally:
+            await message.delete()
         media_ids = list()
         if reaction.message.attachments:
             async def save(attachment: Attachment):

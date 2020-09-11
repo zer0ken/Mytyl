@@ -38,7 +38,9 @@
     ":arrow_left:": "⬅️",
     ":arrow_right:": "➡️",
     ":white_check_mark:": "✅",
-    ":blue_heart:": "\uD83D\uDC99"
+    ":blue_heart:": "\uD83D\uDC99",
+    ":o:": "⭕",
+    ":x:": "❌"
   },
   "_brief_": {
     "핑": "봇이 반응하는지 확인합니다.",
