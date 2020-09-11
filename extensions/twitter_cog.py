@@ -73,7 +73,7 @@ class TwitterCog(CustomCog, name=get_cog('TwitterCog')['name']):
             if first_status is None:
                 first_status = prev_status
             prev_status = prev_status.id
-        self.twitter.update_status(status=f'{uploader_name}님의 제보\n@\shtelo', in_reply_to_status_id=prev_status)
+        self.twitter.update_status(status=f'{uploader_name}님의 제보\n@shtelo', in_reply_to_status_id=prev_status)
         await reaction.message.channel.send(get_status_url(first_status.id_str))
 
 
