@@ -51,8 +51,8 @@ class TwitterCog(CustomCog, name=get_cog('TwitterCog')['name']):
             async def save(attachment: Attachment):
                 file_ = NamedTemporaryFile('wb')
                 await attachment.save(file_.name)
-                response = self.twitter.media_upload(media=file_)
-                media_ids.append(response['media_id'])
+                response: tweepy.models.Media = self.twitter.media_upload(media=file_)
+                media_ids.append(response.id)
 
             await asyncio.wait([save(attachment) for attachment in reaction.message.attachments])
         author_name = await get_twitter_mention(reaction.message.author)
@@ -68,12 +68,13 @@ class TwitterCog(CustomCog, name=get_cog('TwitterCog')['name']):
             if media_ids:
                 media = media_ids[:4]
                 media_ids = media_ids[4:]
-            prev_status = self.twitter.update_status(status=status, media_ids=media,
-                                                     in_reply_to_status_id=prev_status)
+            if media:
+                prev_status = self.twitter.update_status(status=status, media_ids=media,
+                                                         in_reply_to_status_id=prev_status)
             if first_status is None:
                 first_status = prev_status
             prev_status = prev_status.id
-        self.twitter.update_status(status=f'{uploader_name}님의 제보\n@shtelo', in_reply_to_status_id=prev_status)
+        self.twitter.update_status(status=f'{uploader_name}님의 제보\n@//shtelo', in_reply_to_status_id=prev_status)
         await reaction.message.channel.send(get_status_url(first_status.id_str))
 
 
