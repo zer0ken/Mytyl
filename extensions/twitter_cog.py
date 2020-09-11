@@ -84,8 +84,6 @@ class TwitterCog(CustomCog, name=get_cog('TwitterCog')['name']):
                 file_.close()
 
             await asyncio.wait([save(attachment) for attachment in reaction.message.attachments])
-        print(reaction)
-        print(reaction.message)
         author_name = await get_twitter_mention(reaction.message.author)
         if author_name is None:
             author_name = reaction.message.author.name
