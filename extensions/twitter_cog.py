@@ -51,8 +51,9 @@ class TwitterCog(CustomCog, name=get_cog('TwitterCog')['name']):
             async def save(attachment: Attachment):
                 file_ = NamedTemporaryFile('wb')
                 await attachment.save(file_.name)
-                response: tweepy.models.Media = self.twitter.media_upload(media=file_)
+                response: tweepy.models.Media = self.twitter.media_upload(file_.name)
                 media_ids.append(response.id)
+                file_.close()
 
             await asyncio.wait([save(attachment) for attachment in reaction.message.attachments])
         author_name = await get_twitter_mention(reaction.message.author)
