@@ -45,6 +45,11 @@ class TwitterCog(CustomCog, name=get_cog('TwitterCog')['name']):
         self.twitter = tweepy.API(auth)
         self.cached_message = []
 
+    def cache(self, message_id: int):
+        self.cached_message.append(message_id)
+        if len(self.cached_message) > CACHE_SIZE:
+            self.cached_message = self.cached_message[1:]
+
     @CustomCog.listener(name='on_reaction_add')
     async def tweet_from_message(self, reaction: Reaction, uploader: User):
         if reaction.emoji != UPLOAD_EMOJI:
@@ -65,6 +70,7 @@ class TwitterCog(CustomCog, name=get_cog('TwitterCog')['name']):
             return
         else:
             if reaction.emoji == CANCEL_EMOJI:
+                self.cache(reaction.message.id)
                 return
         finally:
             await message.delete()
@@ -99,9 +105,7 @@ class TwitterCog(CustomCog, name=get_cog('TwitterCog')['name']):
             mentions = uploader_mention + ' ' + mentions
         self.twitter.update_status(status=mentions, in_reply_to_status_id=prev_status)
         await reaction.message.channel.send(get_status_url(first_status.id_str))
-        self.cached_message.append(reaction.message.id)
-        if len(self.cached_message) > CACHE_SIZE:
-            self.cached_message = self.cached_message[1:]
+        self.cache(reaction.message.id)
 
 
 def setup(bot: Bot):
