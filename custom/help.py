@@ -100,7 +100,6 @@ class CustomHelpCog(CustomCog, name=get_cog('CustomHelpCog')['name']):
     """
     필요한 명령어를 찾거나 사용볍을 확인하기 위한 기능을 포함합니다.
     """
-
     def __init__(self, client: CustomBot):
         super().__init__(client)
         self.client: CustomBot = client

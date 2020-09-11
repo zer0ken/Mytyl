@@ -35,7 +35,6 @@ class TwitterCog(CustomCog, name=get_cog('TwitterCog')['name']):
     """
     트위터와 연동하여 동작하는 기능들을 포함합니다.
     """
-
     def __init__(self, bot: Bot):
         super().__init__(bot)
         self.bot = bot

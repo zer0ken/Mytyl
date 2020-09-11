@@ -19,6 +19,7 @@ class GoogleSpider(Spider):
         results = tree.xpath('//div[@class="ZINbbc xpd O9g5cc uUPGi"]')
         print(results)
 
+
         # soup = BeautifulSoup(response.body, 'lxml', from_encoding='ANSI')
         # print(soup.prettify())
         # articles = soup.find_all('div', class_='ZINbbc xpd O9g5cc uUPGi')
