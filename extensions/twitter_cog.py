@@ -16,10 +16,6 @@ def get_status_url(id_: str):
     return 'https://twitter.com/mytyl_thrainn/status/' + id_
 
 
-def get_attachment_path(name):
-    return f'./mytyl/data/{name}.temp'
-
-
 def chunkstring(string, length):
     return [string[i:i + length] for i in range(0, len(string), length)]
 
@@ -51,8 +47,8 @@ class TwitterCog(CustomCog, name=get_cog('TwitterCog')['name']):
             async def save(attachment: Attachment):
                 file_ = NamedTemporaryFile('wb')
                 await attachment.save(file_.name)
-                response: tweepy.models.Media = self.twitter.media_upload(file_.name)
-                media_ids.append(response.id)
+                media_: tweepy.models.Media = self.twitter.media_upload(file_.name)
+                media_ids.append(media_.media_id)
                 file_.close()
 
             await asyncio.wait([save(attachment) for attachment in reaction.message.attachments])
