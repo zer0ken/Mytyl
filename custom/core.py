@@ -1,4 +1,7 @@
+from typing import Iterable
+
 import discord
+from discord import Status, Guild, Member
 from discord.ext.commands import GroupMixin, BucketType, Command, Group, Context, check
 
 from utils import get_brief, get_help, get_constant
@@ -74,7 +77,7 @@ def shared_cooldown(rate, per, type=BucketType.default):
 
 def owner_only():
     def predicate(ctx: Context) -> bool:
-        return ctx.author.id in (get_constant('zer0ken_id'),)
+        return ctx.author.id == ctx.bot.owner_id
 
     predicate.name = 'owner_only'
     return check(predicate)
@@ -199,5 +202,18 @@ def tokens_len_range(minimum: int = 0, maximum: int = 0):
         return (not minimum or len_ >= minimum) and (not maximum or len_ <= maximum)
 
     predicate.name = 'tokens_len_range'
+    return check(predicate)
 
+
+def on_status(status: Status or Iterable[Status]):
+    if not isinstance(status, Iterable):
+        status = (status,)
+
+    async def predicate(ctx: Context) -> bool:
+        guild: Guild = ctx.bot.guilds[0]
+        bot_member: Member = await guild.fetch_member(ctx.bot.user.id)
+        print(bot_member.status)
+        return bot_member.status in status
+
+    predicate.name = 'status'
     return check(predicate)

@@ -3,7 +3,7 @@ from tempfile import NamedTemporaryFile
 
 import tweepy
 from decouple import config
-from discord import Profile, Reaction, User, Attachment, Message
+from discord import Profile, Reaction, User, Attachment, Message, Status
 from discord.ext.commands import Bot
 
 from custom.cog import CustomCog
@@ -12,6 +12,7 @@ from utils import get_cog, get_emoji
 CACHE_SIZE = 100
 TWEET_MAX_LENGTH = 140
 TWEET_TIMEOUT = 60
+TWEET_DELAY = 5
 
 UPLOAD_EMOJI = get_emoji(':blue_heart:')
 CONFIRM_EMOJI = get_emoji(':o:')
@@ -52,6 +53,8 @@ class TwitterCog(CustomCog, name=get_cog('TwitterCog')['name']):
 
     @CustomCog.listener(name='on_reaction_add')
     async def tweet_from_message(self, reaction: Reaction, uploader: User):
+        if self.bot.guilds[0].get_member(self.bot.user.id).status != Status.online:
+            return
         if reaction.emoji != UPLOAD_EMOJI:
             return
         if reaction.message.id in self.cached_message:
@@ -75,15 +78,12 @@ class TwitterCog(CustomCog, name=get_cog('TwitterCog')['name']):
         finally:
             await confirm_message.delete()
         media_ids = list()
-        if reaction.message.attachments:
-            async def save(attachment: Attachment):
-                file_ = NamedTemporaryFile('wb')
-                await attachment.save(file_.name)
-                media_: tweepy.models.Media = self.twitter.media_upload(file_.name)
-                media_ids.append(media_.media_id)
-                file_.close()
-
-            await asyncio.wait([save(attachment) for attachment in reaction.message.attachments])
+        for attachment in reaction.message.attachments:
+            file_ = NamedTemporaryFile('wb')
+            await attachment.save(file_.name)
+            media_: tweepy.models.Media = self.twitter.media_upload(file_.name)
+            media_ids.append(media_.media_id)
+            file_.close()
         author_name = await get_twitter_mention(reaction.message.author)
         if author_name is None:
             author_name = reaction.message.author.name
@@ -99,6 +99,7 @@ class TwitterCog(CustomCog, name=get_cog('TwitterCog')['name']):
             if first_status is None:
                 first_status = prev_status
             prev_status = prev_status.id
+            await asyncio.sleep(TWEET_DELAY)
         mentions = f'{uploader.name}님의 제보\n@shtelo'
         uploader_mention = await get_twitter_mention(uploader)
         if uploader_mention is not None:
