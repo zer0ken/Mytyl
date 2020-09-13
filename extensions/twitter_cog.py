@@ -53,8 +53,6 @@ class TwitterCog(CustomCog, name=get_cog('TwitterCog')['name']):
 
     @CustomCog.listener(name='on_reaction_add')
     async def tweet_from_message(self, reaction: Reaction, uploader: User):
-        if self.bot.guilds[0].get_member(self.bot.user.id).status != Status.online:
-            return
         if reaction.emoji != UPLOAD_EMOJI:
             return
         if reaction.message.id in self.cached_message:
