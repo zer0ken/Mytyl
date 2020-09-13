@@ -12,13 +12,13 @@ from utils import get_path, get_constant, singleton
 @singleton
 class CustomBot(Bot):
     def __init__(self, args: list):
-        super().__init__(get_constant('prefixes'), status=Status.online)
+        super().__init__(get_constant('prefixes'))
         self.help_command = None
         self.load_all_extensions()
         if 'b' in args:
             get_event_loop().run_until_complete(self.start(config('DISCORD_BOT_TOKEN'), bot=True))
         else:
-            get_event_loop().run_until_complete(self.start(config('DISCORD_USER_TOKEN'), bot=False, ))
+            get_event_loop().run_until_complete(self.start(config('DISCORD_USER_TOKEN'), bot=False))
 
     def load_all_extensions(self):
         for file_name in listdir(get_path('extensions')):
