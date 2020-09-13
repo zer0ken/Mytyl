@@ -57,8 +57,9 @@ class TwitterCog(CustomCog, name=get_cog('TwitterCog')['name']):
             return
         if reaction.message.id in self.cached_message:
             return
-
-        confirm_message: Message = await reaction.message.channel.send('이 메시지를 트위터에 올릴까요?')
+        await asyncio.sleep(TWEET_DELAY)
+        confirm_message: Message = await reaction.message.channel.send(
+            '이 메시지를 트위터에 올릴까요?\n> %s' % reaction.message.jump_url)
         await confirm_message.add_reaction(CONFIRM_EMOJI)
         await confirm_message.add_reaction(CANCEL_EMOJI)
 
