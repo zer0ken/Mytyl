@@ -88,18 +88,17 @@ class TwitterCog(CustomCog, name=get_cog('TwitterCog')['name']):
             author_name = reaction.message.author.name
         first_status = None
         prev_status = None
-        for status in chunkstring(f'{author_name}: {reaction.message.content}', TWEET_MAX_LENGTH):
+        for status in chunkstring(f'@shtelo\n{author_name}: {reaction.message.content}', TWEET_MAX_LENGTH):
             media = None
             if media_ids:
                 media = media_ids[:4]
                 media_ids = media_ids[4:]
-            prev_status = self.twitter.update_status(status=status, media_ids=media,
-                                                     in_reply_to_status_id=prev_status)
+            prev_status = self.twitter.update_status(status=status, media_ids=media, in_reply_to_status_id=prev_status)
             if first_status is None:
                 first_status = prev_status
             prev_status = prev_status.id
             await asyncio.sleep(TWEET_DELAY)
-        mentions = f'{uploader.name}님의 제보\n@shtelo'
+        mentions = f'{uploader.name}님의 제보'
         uploader_mention = await get_twitter_mention(uploader)
         if uploader_mention is not None:
             mentions = uploader_mention + ' ' + mentions
