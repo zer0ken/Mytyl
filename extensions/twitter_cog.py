@@ -57,6 +57,7 @@ class TwitterCog(CustomCog, name=get_cog('TwitterCog')['name']):
             return
         if reaction.message.id in self.cached_message:
             return
+        self.cache(reaction.message.id)
         await asyncio.sleep(TWEET_DELAY)
         confirm_message: Message = await reaction.message.channel.send(
             '이 메시지를 트위터에 올릴까요?\n> %s' % reaction.message.jump_url)
@@ -72,7 +73,6 @@ class TwitterCog(CustomCog, name=get_cog('TwitterCog')['name']):
             return
         else:
             if confirm_reaction.emoji == CANCEL_EMOJI:
-                self.cache(reaction.message.id)
                 return
         finally:
             await confirm_message.delete()
@@ -104,7 +104,6 @@ class TwitterCog(CustomCog, name=get_cog('TwitterCog')['name']):
             mentions = uploader_mention + ' ' + mentions
         self.twitter.update_status(status=mentions, in_reply_to_status_id=prev_status)
         await reaction.message.channel.send(get_status_url(first_status.id_str))
-        self.cache(reaction.message.id)
 
 
 def setup(bot: Bot):
