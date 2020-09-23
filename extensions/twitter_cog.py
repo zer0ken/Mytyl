@@ -75,6 +75,7 @@ class TwitterCog(CustomCog, name=get_cog('TwitterCog')['name']):
             if confirm_reaction.emoji == CANCEL_EMOJI:
                 return
         finally:
+            await asyncio.sleep(TWEET_DELAY)
             await confirm_message.delete()
         media_ids = list()
         for attachment in reaction.message.attachments:
